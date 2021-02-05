@@ -18,19 +18,26 @@ my_database = mysql.connector.connect(
 
 my_cursor = my_database.cursor()
 
-# my_cursor.execute("CREATE TABLE if not exists Customer(customerid INT AUTO_INCREMENT PRIMARY KEY not null, "
-#                   "firstname VARCHAR(55) not null ,lastname VARCHAR(55) not null, middlename varchar(55),"
-#                   " dateofbirth DATE not null,occupation VARCHAR(255) not null )")
-
-# my_cursor.execute("CREATE TABLE if not exists Account(AccountNumber INT(10) PRIMARY KEY not null, customerid INT,"
-#                   "AccountType VARCHAR(20) not null ,AccountStatus VARCHAR(20) not null, AccountOpeningDate Date),"
-#                   "not null FOREIGN KEY (customerid) REFERENCES Customer(customerid)")
+my_cursor.execute("CREATE TABLE if not exists Customer(customerid INT AUTO_INCREMENT PRIMARY KEY not null, "
+                  "firstname VARCHAR(55) not null ,lastname VARCHAR(55) not null, middlename varchar(55),"
+                  " dateofbirth DATE not null,occupation VARCHAR(255) not null )")
 
 
-my_cursor.execute("CREATE TABLE if not exists Account(accountNumber integer not null auto_increment,"
-                  "customerId INT not null,"
-                  "AccountType varchar(20),"
-                  "AccountStatus varchar(30),"
-                  "AccountOpeningDate DATE default (current_date),"
-                  "constraint account_pk primary key(accountNumber),"
-                  "constraint account_fk foreign key(customerId) references Customer(customerId)")
+query = """ CREATE TABLE if not exists Account(
+            AccountNumber INT PRIMARY KEY not null auto_increment,
+            customerid INT not null,
+            AccountType VARCHAR(20) not null,
+            AccountStatus VARCHAR(20) not null,
+            AccountOpeningDate Date not null,
+            constraint account_fk FOREIGN KEY(customerid) REFERENCES Customer(customerid))"""
+
+transaction_table = """CREATE TABLE if not exists Transactions(
+            TransactionId INT PRIMARY KEY not null auto_increment,
+            AccountNumber INT not null,
+            TransactionType VARCHAR(20) not null,
+            Transaction_amouunt INT not null,
+            TransactionDate Date not null,
+            constraint Transaction_fk FOREIGN KEY(AccountNumber) REFERENCES Account(AccountNumber))"""
+
+my_cursor.execute(transaction_table)
+my_cursor.execute(query)
